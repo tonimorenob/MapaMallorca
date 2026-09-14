@@ -47,7 +47,7 @@
     
     <div id="map"></div>
 
-    <!-- Widget de la Brúixola Nativa -->
+    <!-- Widget de la Brúixola Web -->
     <div id="compass-widget">
         <div class="w-9 h-9 flex justify-center items-center">
             <svg viewBox="0 0 24 24" class="w-8 h-8 text-red-600 drop-shadow" fill="currentColor">
@@ -55,7 +55,7 @@
             </svg>
         </div>
         <button id="enable-compass" class="bg-emerald-700 hover:bg-emerald-800 text-white text-[9px] font-bold py-1 px-2 rounded transition-colors shadow">
-            Obrir Brúixola
+            Brúixola Web
         </button>
     </div>
 
@@ -152,7 +152,7 @@
         const overlayMaps = {
             "Finques i Parcel·les (Cadastre)": capaCadastre,
             "📂 Glossari de Sigles (Cadastre)": glossariLayer,
-            "🧭 Brúixola Nativa": compassLayer
+            "🧭 Brúixola Web": compassLayer
         };
 
         L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
@@ -168,7 +168,7 @@
             if (e.name === "📂 Glossari de Sigles (Cadastre)") {
                 document.getElementById('glossari-cadastre').classList.remove('hidden');
             }
-            if (e.name === "🧭 Brúixola Nativa") {
+            if (e.name === "🧭 Brúixola Web") {
                 document.getElementById('compass-widget').style.display = 'flex';
             }
         });
@@ -177,20 +177,15 @@
             if (e.name === "📂 Glossari de Sigles (Cadastre)") {
                 document.getElementById('glossari-cadastre').classList.add('hidden');
             }
-            if (e.name === "🧭 Brúixola Nativa") {
+            if (e.name === "🧭 Brúixola Web") {
                 document.getElementById('compass-widget').style.display = 'none';
             }
         });
 
-        // 2. LLANÇADOR DE LA BRÚIXOLA NATIVA DEL SISTEMA
+        // 2. ACCÉS FIABLE A UNA BRÚIXOLA WEB EXTERNA
         document.getElementById('enable-compass').addEventListener('click', () => {
-            if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
-                window.location.href = "compass://";
-            } else if (/android/i.test(navigator.userAgent)) {
-                window.location.href = "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_COMPASS;end;";
-            } else {
-                alert("Aquesta funció està dissenyada per a telèfons mòbils.");
-            }
+            // Obre una eina web de brúixola en línia compatible amb mòbils
+            window.open("https://www.online-stopwatch.com/compass/", "_blank");
         });
 
         // 3. ICONES I CIMS
