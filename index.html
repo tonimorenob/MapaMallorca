@@ -193,7 +193,7 @@
             }
         });
 
-        // 2. CONTROL DE BRÚIXOLA AMB FILTRE DE SUAVITZAT (INTERPOLACIÓ)
+        // 2. CONTROL DE BRÚIXOLA AMB SUAVITZAT
         const compassNeedle = document.getElementById('compass-needle');
         const enableCompassBtn = document.getElementById('enable-compass');
 
@@ -229,7 +229,6 @@
                 }
             }, true);
 
-            // Bucle d'animació suau per evitar salts bruscos
             function suavitzarMoviment() {
                 let diff = targetHeading - currentHeading;
                 
