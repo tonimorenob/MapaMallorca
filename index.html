@@ -182,16 +182,14 @@
             }
         });
 
-        // 2. ACCÉS DIRECTE A LA BRÚIXOLA NATIVA DEL TELÈFON
+        // 2. LLANÇADOR DE LA BRÚIXOLA NATIVA DEL SISTEMA
         document.getElementById('enable-compass').addEventListener('click', () => {
-            // Intenta obrir l'app de brúixola o mapes natius del dispositiu
-            // A Android/iOS, l'enllaç geo: o intent: llança l'aplicació d'orientació del sistema
-            if (/android/i.test(navigator.userAgent)) {
-                window.location.href = "intent://maps.google.com/#Intent;package=com.google.android.apps.maps;end";
-            } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
-                window.location.href = "maps://";
+            if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+                window.location.href = "compass://";
+            } else if (/android/i.test(navigator.userAgent)) {
+                window.location.href = "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_COMPASS;end;";
             } else {
-                window.open("https://www.google.com/maps", "_blank");
+                alert("Aquesta funció està dissenyada per a telèfons mòbils.");
             }
         });
 
