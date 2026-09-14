@@ -50,6 +50,7 @@
             justify-content: center;
             align-items: center;
             transform: rotate(0deg);
+            transition: transform 0.3s ease-out;
         }
     </style>
 </head>
@@ -57,7 +58,7 @@
     
     <div id="map"></div>
 
-    <!-- Widget de la Brúixola -->
+    <!-- Widget de la Brúixola per GPS -->
     <div id="compass-widget">
         <div id="compass-needle">
             <svg viewBox="0 0 24 24" class="w-9 h-9 drop-shadow">
@@ -66,7 +67,7 @@
             </svg>
         </div>
         <button id="enable-compass" class="bg-emerald-700 hover:bg-emerald-800 text-white text-[9px] font-bold py-1 px-2 rounded transition-colors shadow">
-            Activar Rumb
+            Activar GPS (Rumb)
         </button>
     </div>
 
@@ -163,9 +164,10 @@
         const overlayMaps = {
             "Finques i Parcel·les (Cadastre)": capaCadastre,
             "📂 Glossari de Sigles (Cadastre)": glossariLayer,
-            "🧭 Brúixola / Orientació": compassLayer
+            "🧭 Rumb per GPS": compassLayer
         };
 
+        L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).watch;
         L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
 
         document.getElementById('close-glossary').addEventListener('click', () => {
@@ -179,7 +181,7 @@
             if (e.name === "📂 Glossari de Sigles (Cadastre)") {
                 document.getElementById('glossari-cadastre').classList.remove('hidden');
             }
-            if (e.name === "🧭 Brúixola / Orientació") {
+            if (e.name === "🧭 Rumb per GPS") {
                 document.getElementById('compass-widget').style.display = 'flex';
             }
         });
@@ -188,78 +190,43 @@
             if (e.name === "📂 Glossari de Sigles (Cadastre)") {
                 document.getElementById('glossari-cadastre').classList.add('hidden');
             }
-            if (e.name === "🧭 Brúixola / Orientació") {
+            if (e.name === "🧭 Rumb per GPS") {
                 document.getElementById('compass-widget').style.display = 'none';
             }
         });
 
-        // 2. CONTROL DE BRÚIXOLA AMB SUAVITZAT
+        // 2. CONTROL DE RUMB PER GPS (DIRECCIÓ DE MARXA)
         const compassNeedle = document.getElementById('compass-needle');
         const enableCompassBtn = document.getElementById('enable-compass');
-
-        let currentHeading = 0;
-        let targetHeading = 0;
+        let watchId = null;
 
         enableCompassBtn.addEventListener('click', () => {
-            if (window.DeviceOrientationEvent) {
-                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    DeviceOrientationEvent.requestPermission()
-                        .then(response => {
-                            if (response === 'granted') { activarSensores(); }
-                            else { alert("Permís denegat."); }
-                        }).catch(() => activarGPS());
-                } else { activarSensores(); }
-            } else { activarGPS(); }
-        });
-
-        function activarSensores() {
-            window.addEventListener('deviceorientation', (event) => {
-                let alpha = null;
-
-                if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
-                    alpha = event.webkitCompassHeading; // iOS Safari
-                } else if (event.alpha !== null) {
-                    alpha = 360 - event.alpha; // Android Chrome
-                }
-
-                if (alpha !== null) {
-                    targetHeading = alpha;
-                    enableCompassBtn.innerText = "Activa";
-                    enableCompassBtn.classList.replace('bg-emerald-700', 'bg-blue-600');
-                }
-            }, true);
-
-            function suavitzarMoviment() {
-                let diff = targetHeading - currentHeading;
-                
-                if (diff > 180) diff -= 360;
-                if (diff < -180) diff += 360;
-
-                currentHeading += diff * 0.2;
-
-                if (compassNeedle) {
-                    compassNeedle.style.transform = `rotate(${currentHeading}deg)`;
-                }
-
-                requestAnimationFrame(suavitzarMoviment);
-            }
-            suavitzarMoviment();
-        }
-
-        function activarGPS() {
             if ('geolocation' in navigator) {
-                navigator.geolocation.watchPosition((position) => {
+                enableCompassBtn.innerText = "Buscant senyal...";
+                
+                if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                }
+
+                watchId = navigator.geolocation.watchPosition((position) => {
                     let heading = position.coords.heading;
+                    
                     if (heading !== null && !isNaN(heading)) {
-                        targetHeading = heading;
+                        compassNeedle.style.transform = `rotate(${heading}deg)`;
                         enableCompassBtn.innerText = "GPS Actiu";
                         enableCompassBtn.classList.replace('bg-emerald-700', 'bg-blue-600');
                     } else {
-                        alert("Mou-te una mica perquè el GPS calculi el rumb.");
+                        enableCompassBtn.innerText = "Caminar per orientar";
                     }
-                }, () => { alert("Error d'ubicació."); }, { enableHighAccuracy: true });
+                }, (error) => {
+                    alert("Error d'ubicació: " + error.message);
+                    enableCompassBtn.innerText = "Activar GPS";
+                }, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 });
+
+            } else {
+                alert("El teu navegador no suporta geolocalització.");
             }
-        }
+        });
 
         // 3. ICONES I CIMS
         const peakIcon = L.divIcon({
@@ -449,6 +416,7 @@
                                 const lat = parseFloat(place.lat);
                                 const lon = parseFloat(place.lon);
                                 
+                                map.flyTo([lon, lat], 14, { duration: 1.5 }); // Corrected order if needed, keeping standard lat/lng
                                 map.flyTo([lat, lon], 14, { duration: 1.5 });
                                 
                                 if(tempExternalMarker) map.removeLayer(tempExternalMarker);
