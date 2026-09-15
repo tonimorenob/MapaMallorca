@@ -11,6 +11,85 @@
         #map { height: 100vh; width: 100vw; z-index: 1; cursor: crosshair; }
         .custom-popup .leaflet-popup-content-wrapper { border-radius: 0.5rem; }
 
+        /* Popup compacte de la xinxeta manual */
+        .compact-pin-popup .leaflet-popup-content-wrapper {
+            border-radius: 10px;
+            padding: 0;
+            width: auto !important;
+            max-width: 210px;
+        }
+
+        .compact-pin-popup .leaflet-popup-content {
+            margin: 9px 11px 10px 11px;
+            width: auto !important;
+            min-width: 0 !important;
+            max-width: 185px;
+            line-height: 1.15;
+            text-align: center;
+        }
+
+        .compact-pin-popup .leaflet-popup-close-button {
+            width: 22px !important;
+            height: 22px !important;
+            line-height: 20px !important;
+            font-size: 18px !important;
+            top: 2px !important;
+            right: 2px !important;
+            color: #6b7280 !important;
+        }
+
+        .compact-pin-popup .leaflet-popup-tip {
+            width: 13px;
+            height: 13px;
+        }
+
+        .pin-popup-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 1px 15px 0 2px;
+            white-space: nowrap;
+        }
+
+        .pin-popup-title {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .pin-popup-coords {
+            margin: 0;
+            font-size: 11px;
+            line-height: 1.1;
+            color: #6b7280;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        }
+
+        .pin-popup-google {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 2px;
+            padding: 5px 9px;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: #eff6ff;
+            color: #0369a1;
+            font-size: 11px;
+            line-height: 1;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .pin-popup-google:hover {
+            background: #dbeafe;
+        }
+
         #search-container {
             position: absolute;
             top: 15px;
@@ -392,7 +471,7 @@
         let firstLocationFix = true;
 
         // Longitud visual de la línia de rumb: 20 km
-        const HEADING_LINE_DISTANCE_METERS = 20000;
+        const HEADING_LINE_DISTANCE_METERS = 120000;
 
         function normalizeHeading(value) {
             return ((value % 360) + 360) % 360;
@@ -857,665 +936,19 @@
             userPinMarker = L.marker([lat, lng], { icon: droppedPinIcon }).addTo(map);
 
             userPinMarker.bindPopup(`
-                <div class="text-center p-2 min-w-[140px]">
-                    <b class="text-gray-800 text-base block mb-1">Punt marcat</b>
-                    <span class="text-xs text-gray-500 block mb-3 font-mono">${lat.toFixed(5)}, ${lng.toFixed(5)}</span>
-                    <a href="${getGoogleMapsLink(lat, lng)}" target="_blank" class="inline-block bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold py-1.5 px-3 rounded-full border border-blue-200 transition-colors w-full text-center pointer-events-auto">
-                        📍 Com arribar-hi
+                <div class="pin-popup-content">
+                    <div class="pin-popup-title">Punt marcat</div>
+                    <div class="pin-popup-coords">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
+                    <a href="${getGoogleMapsLink(lat, lng)}" target="_blank" class="pin-popup-google pointer-events-auto">
+                        📍 Google Maps
                     </a>
                 </div>
-            `).openPopup();
-        });
-
-    </script>
-</body>
-</html>            top: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 9px;
-            font-weight: 800;
-            color: #dc2626;
-            line-height: 1;
-            z-index: 2;
-        }
-
-        #compass-cross-h,
-        #compass-cross-v {
-            position: absolute;
-            background: rgba(107,114,128,0.20);
-        }
-
-        #compass-cross-h {
-            width: 30px;
-            height: 1px;
-            left: 8px;
-            top: 22px;
-        }
-
-        #compass-cross-v {
-            width: 1px;
-            height: 30px;
-            left: 22px;
-            top: 8px;
-        }
-
-        #compass-needle {
-            position: absolute;
-            width: 8px;
-            height: 30px;
-            left: 19px;
-            top: 8px;
-            transform-origin: 50% 50%;
-            transition: transform 80ms linear;
-            z-index: 3;
-        }
-
-        #compass-needle::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 1px;
-            width: 0;
-            height: 0;
-            border-left: 3px solid transparent;
-            border-right: 3px solid transparent;
-            border-bottom: 14px solid #dc2626;
-        }
-
-        #compass-needle::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 1px;
-            width: 0;
-            height: 0;
-            border-left: 3px solid transparent;
-            border-right: 3px solid transparent;
-            border-top: 14px solid #374151;
-        }
-
-        #compass-center-dot {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            border-radius: 9999px;
-            background: #111827;
-            left: 20.5px;
-            top: 20.5px;
-            z-index: 4;
-        }
-
-        #compass-reading {
-            min-width: 46px;
-            text-align: center;
-            font-size: 9px;
-            line-height: 1.1;
-            font-weight: 700;
-            color: #1f2937;
-            background: rgba(255,255,255,0.76);
-            padding: 3px 5px;
-            border-radius: 9999px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        #enable-compass {
-            background: rgba(4,120,87,0.88);
-            color: white;
-            font-size: 9px;
-            font-weight: 700;
-            line-height: 1;
-            padding: 6px 8px;
-            border-radius: 9999px;
-            border: none;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.16);
-            cursor: pointer;
-        }
-
-        #enable-compass:active {
-            transform: scale(0.97);
-        }
-
-        #compass-status {
-            display: none;
-            max-width: 190px;
-            padding: 6px 8px;
-            border-radius: 0.5rem;
-            background: rgba(255,255,255,0.92);
-            color: #374151;
-            font-size: 10px;
-            line-height: 1.25;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.14);
-        }
-
-        @media (max-width: 640px) {
-            #search-container {
-                top: 10px;
-                right: 10px;
-                width: min(300px, calc(100vw - 72px));
-            }
-
-            #compass-widget {
-                left: max(8px, env(safe-area-inset-left));
-                bottom: max(12px, env(safe-area-inset-bottom));
-            }
-
-            #compass-dial {
-                width: 44px;
-                height: 44px;
-            }
-
-            #compass-cross-h { width: 28px; left: 8px; top: 21px; }
-            #compass-cross-v { height: 28px; left: 21px; top: 8px; }
-            #compass-needle { left: 18px; top: 7px; }
-            #compass-center-dot { left: 19.5px; top: 19.5px; }
-        }
-    </style>
-</head>
-<body class="bg-gray-100 font-sans m-0 overflow-hidden">
-
-    <div id="map"></div>
-
-    <!-- Brúixola integrada -->
-    <div id="compass-widget" aria-live="polite">
-        <div id="compass-dial" title="Brúixola del dispositiu">
-            <div id="compass-north-label">N</div>
-            <div id="compass-cross-h"></div>
-            <div id="compass-cross-v"></div>
-            <div id="compass-needle"></div>
-            <div id="compass-center-dot"></div>
-        </div>
-        <div id="compass-reading">---°</div>
-        <button id="enable-compass" type="button">Activar</button>
-        <div id="compass-status"></div>
-    </div>
-
-    <!-- Glossari Oficial del Cadastre -->
-    <div id="glossari-cadastre" class="hidden absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur p-3 rounded-lg shadow-lg border border-gray-200 text-sm w-72 max-h-[65vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-1">
-            <h3 class="font-bold text-emerald-800 text-xs">Glossari Oficial (Cadastre)</h3>
-            <button id="close-glossary" class="text-gray-400 hover:text-red-600 font-bold px-1.5 py-0.5 rounded text-base leading-none transition-colors">✕</button>
-        </div>
-
-        <div class="mb-2">
-            <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">Usos Agraris i Sòl Rústic</span>
-            <ul class="space-y-1 text-gray-700 text-[11px]">
-                <li><span class="font-bold w-12 inline-block text-gray-900">E, S</span> Secà / Sembrat</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">C, CR</span> Regadiu / Horta</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">AM, AL</span> Ametllers / Garrovers</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">O, OC</span> Oliveres</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">V</span> Vinya</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">MT, P</span> Pinar / Bosc fustaner</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">MB</span> Mont baix / Garriga</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">PA, PR</span> Pastures / Prats</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">I, IM</span> Improductiu (Roca nua)</li>
-            </ul>
-        </div>
-
-        <div class="mb-2">
-            <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">Edificacions i Usos Principals</span>
-            <ul class="space-y-1 text-gray-700 text-[11px]">
-                <li><span class="font-bold w-12 inline-block text-gray-900">A</span> Residencial / Habitatge principal</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">B, F</span> Magatzem agrari / Quart / Aperos</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">D</span> Espectacles / Esportiu</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">J, JO</span> Industrial agrari / Oficines / Serveis</li>
-            </ul>
-        </div>
-
-        <div>
-            <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">Elements i Annexos del Plànol</span>
-            <ul class="space-y-1 text-gray-700 text-[11px]">
-                <li><span class="font-bold w-12 inline-block text-gray-900">POR / +</span> Porxo obert / Cobert annex</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">PI</span> Piscina / Instal·lació de bany</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">AL</span> Alberca / Bassa de reg</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">TC</span> Dipòsit / Tèrcol / Annex menor</li>
-                <li><span class="font-bold w-12 inline-block text-gray-900">I, II...</span> Nombre de plantes / altures</li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="search-container" class="bg-white rounded-lg shadow-lg flex flex-col">
-        <div class="relative">
-            <input type="text" id="search-input" placeholder="Cercar cim o indret a les Balears..."
-                   class="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 border-b border-gray-200">
-            <button id="clear-search" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600 hidden">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        <ul id="search-results" class="bg-white rounded-b-lg divide-y divide-gray-100"></ul>
-    </div>
-
-    <script>
-        // 1. INICIALITZACIÓ DEL MAPA
-        const map = L.map('map', { zoomControl: false }).setView([39.5, 2.9], 9);
-        L.control.zoom({ position: 'topleft' }).addTo(map);
-
-        const mapaTopografico = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            maxZoom: 22,
-            maxNativeZoom: 17,
-            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> | Relleu: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
-        });
-
-        const mapaSatelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 22,
-            maxNativeZoom: 17,
-            attribution: 'Tiles &copy; Esri'
-        });
-
-        const capaCadastre = L.tileLayer.wms('https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', {
-            layers: 'Catastro,TEXTOS',
-            format: 'image/png',
-            transparent: true,
-            maxZoom: 22,
-            attribution: '&copy; <a href="http://www.catastro.minhap.es/" target="_blank">Cadastre</a>'
-        });
-
-        mapaTopografico.addTo(map);
-
-        const glossariLayer = L.layerGroup();
-        const compassLayer = L.layerGroup();
-
-        const baseMaps = {
-            "Mapa Topogràfic (Relleu)": mapaTopografico,
-            "Vista Satèl·lit (Esri)": mapaSatelite
-        };
-
-        const overlayMaps = {
-            "Finques i Parcel·les (Cadastre)": capaCadastre,
-            "📂 Glossari de Sigles (Cadastre)": glossariLayer,
-            "🧭 Brúixola integrada": compassLayer
-        };
-
-        L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
-
-        document.getElementById('close-glossary').addEventListener('click', () => {
-            document.getElementById('glossari-cadastre').classList.add('hidden');
-            if (map.hasLayer(glossariLayer)) {
-                glossariLayer.remove();
-            }
-        });
-
-        map.on('overlayadd', function(e) {
-            if (e.name === "📂 Glossari de Sigles (Cadastre)") {
-                document.getElementById('glossari-cadastre').classList.remove('hidden');
-            }
-            if (e.name === "🧭 Brúixola integrada") {
-                document.getElementById('compass-widget').style.display = 'flex';
-            }
-        });
-
-        map.on('overlayremove', function(e) {
-            if (e.name === "📂 Glossari de Sigles (Cadastre)") {
-                document.getElementById('glossari-cadastre').classList.add('hidden');
-            }
-            if (e.name === "🧭 Brúixola integrada") {
-                document.getElementById('compass-widget').style.display = 'none';
-            }
-        });
-
-        // 2. BRÚIXOLA DEL DISPOSITIU
-        const compassNeedle = document.getElementById('compass-needle');
-        const compassReading = document.getElementById('compass-reading');
-        const compassButton = document.getElementById('enable-compass');
-        const compassStatus = document.getElementById('compass-status');
-
-        let compassActive = false;
-        let lastHeading = null;
-        let orientationEventName = 'deviceorientation';
-
-        function normalizeHeading(value) {
-            return ((value % 360) + 360) % 360;
-        }
-
-        function headingToCardinal(deg) {
-            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
-            return directions[Math.round(deg / 45) % 8];
-        }
-
-        function setCompassStatus(message, visible = true) {
-            compassStatus.textContent = message;
-            compassStatus.style.display = visible ? 'block' : 'none';
-        }
-
-        function updateCompassVisual(heading) {
-            const normalized = normalizeHeading(heading);
-            lastHeading = normalized;
-
-            // L'agulla vermella apunta al nord respecte de l'orientació del telèfon.
-            compassNeedle.style.transform = `rotate(${-normalized}deg)`;
-            compassReading.textContent = `${Math.round(normalized)}° ${headingToCardinal(normalized)}`;
-        }
-
-        function handleOrientation(event) {
-            let heading = null;
-
-            // Safari/iOS: webkitCompassHeading ja dona el rumb 0-360 respecte al nord.
-            if (typeof event.webkitCompassHeading === 'number') {
-                heading = event.webkitCompassHeading;
-            }
-            // Android/Chrome: alpha acostuma a representar la rotació al voltant de l'eix Z.
-            else if (typeof event.alpha === 'number') {
-                heading = 360 - event.alpha;
-            }
-
-            if (heading !== null && Number.isFinite(heading)) {
-                updateCompassVisual(heading);
-
-                if (!compassActive) {
-                    compassActive = true;
-                    compassButton.textContent = 'Activa';
-                    compassButton.style.background = 'rgba(4,120,87,0.72)';
-                }
-
-                setCompassStatus('', false);
-            }
-        }
-
-        function startCompassListener() {
-            if ('ondeviceorientationabsolute' in window) {
-                orientationEventName = 'deviceorientationabsolute';
-            } else {
-                orientationEventName = 'deviceorientation';
-            }
-
-            window.removeEventListener('deviceorientation', handleOrientation, true);
-            window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
-            window.addEventListener(orientationEventName, handleOrientation, true);
-
-            setTimeout(() => {
-                if (lastHeading === null) {
-                    setCompassStatus('No arriba informació del sensor. Comprova que el navegador permeti els sensors de moviment i que la pàgina s’obri per HTTPS.');
-                }
-            }, 2500);
-        }
-
-        async function enableCompass() {
-            try {
-                // iPhone/iPad moderns exigeixen permís explícit iniciat per un toc de l'usuari.
-                if (
-                    typeof DeviceOrientationEvent !== 'undefined' &&
-                    typeof DeviceOrientationEvent.requestPermission === 'function'
-                ) {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-
-                    if (permission !== 'granted') {
-                        setCompassStatus('Permís de brúixola denegat.');
-                        return;
-                    }
-                }
-
-                if (typeof DeviceOrientationEvent === 'undefined') {
-                    setCompassStatus('Aquest dispositiu o navegador no exposa el sensor d’orientació.');
-                    return;
-                }
-
-                compassButton.textContent = 'Activant...';
-                startCompassListener();
-
-            } catch (error) {
-                console.error('Error activant la brúixola:', error);
-                setCompassStatus('No s’ha pogut activar la brúixola. Prova d’obrir la pàgina amb Chrome o Safari i per HTTPS.');
-                compassButton.textContent = 'Reintentar';
-            }
-        }
-
-        compassButton.addEventListener('click', enableCompass);
-
-        // 3. ICONES I CIMS
-        const peakIcon = L.divIcon({
-            html: `<svg viewBox="0 0 24 24" class="w-8 h-8 text-emerald-600 drop-shadow-md" fill="currentColor"><path d="M12 3L1 21h22L12 3zm0 3.8l6.8 11.2H5.2L12 6.8z"/><path d="M12 11l-3 5h6z"/></svg>`,
-            className: 'bg-transparent',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        });
-
-        const droppedPinIcon = L.divIcon({
-            html: `<svg viewBox="0 0 24 24" class="w-8 h-8 text-blue-600 drop-shadow-md" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
-            className: 'bg-transparent',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        });
-
-        const peaks = [
-            { name: "Puig Major", height: 1445, lat: 39.8075, lng: 2.7933, range: "Tramuntana (Mallorca)" },
-            { name: "Penyal des Migdia", height: 1398, lat: 39.8015, lng: 2.7845, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de Massanella", height: 1367, lat: 39.8066, lng: 2.8182, range: "Tramuntana (Mallorca)" },
-            { name: "Morro d'en Pelut", height: 1319, lat: 39.8013, lng: 2.7952, range: "Tramuntana (Mallorca)" },
-            { name: "Frontó de sa Mola", height: 1228, lat: 39.8060, lng: 2.8270, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de ses Bassetes", height: 1212, lat: 39.8040, lng: 2.8340, range: "Tramuntana (Mallorca)" },
-            { name: "Puig d'en Galileu", height: 1180, lat: 39.8122, lng: 2.8427, range: "Tramuntana (Mallorca)" },
-            { name: "Tossals Verds", height: 1115, lat: 39.7744, lng: 2.8080, range: "Tramuntana (Mallorca)" },
-            { name: "Sa Rateta", height: 1113, lat: 39.7694, lng: 2.7844, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de ses Vinyes", height: 1108, lat: 39.8136, lng: 2.8014, range: "Tramuntana (Mallorca)" },
-            { name: "Puig Tomir", height: 1104, lat: 39.8455, lng: 2.9238, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de l'Ofre", height: 1093, lat: 39.7583, lng: 2.7663, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de s'Encinar", height: 1072, lat: 39.8090, lng: 2.8380, range: "Tramuntana (Mallorca)" },
-            { name: "Serra d'Alfàbia", height: 1067, lat: 39.7394, lng: 2.7169, range: "Tramuntana (Mallorca)" },
-            { name: "Na Franquesa", height: 1067, lat: 39.7719, lng: 2.7936, range: "Tramuntana (Mallorca)" },
-            { name: "Puig des Teix", height: 1064, lat: 39.7397, lng: 2.6358, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de n'Ali", height: 1038, lat: 39.7950, lng: 2.8190, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de Galatzó", height: 1027, lat: 39.6366, lng: 2.4844, range: "Tramuntana (Mallorca)" },
-            { name: "Puig Roig", height: 1003, lat: 39.8491, lng: 2.8711, range: "Tramuntana (Mallorca)" },
-            { name: "Cornador Gran", height: 956, lat: 39.7525, lng: 2.7380, range: "Tramuntana (Mallorca)" },
-            { name: "Mola de Planícia", height: 941, lat: 39.6736, lng: 2.5358, range: "Tramuntana (Mallorca)" },
-            { name: "Mola de s'Esclop", height: 928, lat: 39.6208, lng: 2.4497, range: "Tramuntana (Mallorca)" },
-            { name: "Puig Caragoler de Femenia", height: 921, lat: 39.8450, lng: 2.8940, range: "Tramuntana (Mallorca)" },
-            { name: "Puig Fitor", height: 905, lat: 39.7890, lng: 2.8710, range: "Tramuntana (Mallorca)" },
-            { name: "Puig Gros de Ternelles", height: 838, lat: 39.8770, lng: 2.9730, range: "Tramuntana (Mallorca)" },
-            { name: "Castell d'Alaró", height: 821, lat: 39.7323, lng: 2.7931, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de s'Alcadena", height: 816, lat: 39.7330, lng: 2.8364, range: "Tramuntana (Mallorca)" },
-            { name: "Moleta de Pastoritx", height: 757, lat: 39.7380, lng: 2.6710, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de na Bauçana", height: 614, lat: 39.6053, lng: 2.4800, range: "Tramuntana (Mallorca)" },
-            { name: "Talaia Freda", height: 562, lat: 39.7360, lng: 3.3420, range: "Llevant (Mallorca)" },
-            { name: "Puig de Morell", height: 562, lat: 39.7613, lng: 3.3205, range: "Llevant (Mallorca)" },
-            { name: "Puig de Randa", height: 543, lat: 39.5300, lng: 2.9280, range: "Pla (Mallorca)" },
-            { name: "Bec de Ferrutx", height: 519, lat: 39.7391, lng: 3.3286, range: "Llevant (Mallorca)" },
-            { name: "Puig de Sant Salvador", height: 510, lat: 39.4552, lng: 3.1772, range: "Llevant (Mallorca)" },
-            { name: "Puig de Son Poc", height: 494, lat: 39.6730, lng: 2.6840, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de sa Tudossa", height: 441, lat: 39.7663, lng: 3.3245, range: "Llevant (Mallorca)" },
-            { name: "Puig de Galdent", height: 402, lat: 39.5080, lng: 2.9780, range: "Pla (Mallorca)" },
-            { name: "Puig de María", height: 320, lat: 39.8660, lng: 3.0180, range: "Tramuntana (Mallorca)" },
-            { name: "Puig de Bonany", height: 317, lat: 39.5930, lng: 3.1110, range: "Pla (Mallorca)" },
-            { name: "Puig de ses Bruixes", height: 311, lat: 39.5160, lng: 2.9550, range: "Pla (Mallorca)" },
-            { name: "Puig de Santa Magdalena", height: 287, lat: 39.7390, lng: 2.9990, range: "Raiguer (Mallorca)" },
-            { name: "Puig de Sant Martí", height: 248, lat: 39.8180, lng: 3.1040, range: "Nord (Mallorca)" },
-            { name: "Na Penyal", height: 236, lat: 39.6040, lng: 3.3640, range: "Llevant (Mallorca)" },
-            { name: "Puig de Consolació", height: 199, lat: 39.3660, lng: 3.1490, range: "Migjorn (Mallorca)" },
-            { name: "El Toro", height: 358, lat: 39.9829, lng: 4.1166, range: "Menorca" },
-            { name: "Sa Talaia", height: 475, lat: 38.9158, lng: 1.2721, range: "Eivissa" }
-        ];
-
-        const markers = [];
-
-        function getGoogleMapsLink(lat, lng) {
-            return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-        }
-
-        peaks.forEach(peak => {
-            const marker = L.marker([peak.lat, peak.lng], { icon: peakIcon }).addTo(map);
-            marker.bindPopup(`
-                <div class="text-center p-2 min-w-[140px]">
-                    <strong class="text-lg text-emerald-800 block leading-tight">${peak.name}</strong>
-                    <span class="text-gray-800 font-bold text-base block mt-1">${peak.height} m</span>
-                    <span class="text-xs text-gray-500 uppercase tracking-wide block mb-3">${peak.range}</span>
-                    <a href="${getGoogleMapsLink(peak.lat, peak.lng)}" target="_blank" class="inline-block bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold py-1.5 px-3 rounded-full border border-emerald-200 transition-colors w-full text-center pointer-events-auto">
-                        📍 Com arribar-hi (Google)
-                    </a>
-                </div>
-            `, { className: 'custom-popup' });
-
-            markers.push({ ...peak, leafletObject: marker });
-        });
-
-        // 4. CERCADOR
-        function traduirTipusLloc(osmClass, osmType) {
-            if (osmClass === 'highway') return 'Carrer / Camí';
-            if (osmClass === 'natural' && osmType === 'peak') return 'Muntanya / Cim';
-            if (osmClass === 'natural' && osmType === 'beach') return 'Platja / Cala';
-            if (osmClass === 'natural' && osmType === 'wood') return 'Bosc / Pinar';
-            if (osmClass === 'natural' && osmType === 'bay') return 'Badia / Cala';
-            if (osmClass === 'waterway') return 'Torrent / Curs d\'aigua';
-            if (osmClass === 'place' && osmType === 'isolated_dwelling') return 'Possessió / Finca';
-            if (osmClass === 'building' || osmType === 'farm') return 'Finca / Edifici';
-            if (osmClass === 'historic') return 'Lloc Històric';
-            if (osmClass === 'tourism' && osmType === 'viewpoint') return 'Mirador';
-            if (osmClass === 'tourism') return 'Punt Turístic';
-            if (osmClass === 'place' && (osmType === 'village' || osmType === 'town' || osmType === 'city')) return 'Població';
-            if (osmClass === 'place' && osmType === 'locality') return 'Paratge / Localitat';
-            if (osmClass === 'amenity' && osmType === 'restaurant') return 'Restaurant';
-            if (osmClass === 'shop') return 'Comerç';
-            return 'Indret';
-        }
-
-        function obtenirMunicipi(address) {
-            if (!address) return '';
-            return address.village || address.town || address.city || address.municipality || address.county || '';
-        }
-
-        const searchInput = document.getElementById('search-input');
-        const searchResults = document.getElementById('search-results');
-        const clearBtn = document.getElementById('clear-search');
-
-        let debounceTimer;
-        let tempExternalMarker = null;
-        let userPinMarker = null;
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            clearTimeout(debounceTimer);
-
-            if (query.length > 0) {
-                clearBtn.classList.remove('hidden');
-            } else {
-                clearBtn.classList.add('hidden');
-                searchResults.style.display = 'none';
-                return;
-            }
-
-            if (query.length < 3) return;
-
-            debounceTimer = setTimeout(async () => {
-                searchResults.innerHTML = '';
-                searchResults.style.display = 'block';
-
-                const localMatches = markers.filter(p => p.name.toLowerCase().includes(query));
-
-                localMatches.forEach(match => {
-                    const li = document.createElement('li');
-                    li.className = 'px-4 py-3 hover:bg-emerald-50 cursor-pointer flex justify-between items-center transition-colors';
-                    li.innerHTML = `
-                        <div class="flex flex-col">
-                            <span class="font-medium text-emerald-900">${match.name}</span>
-                            <span class="text-xs text-emerald-600">Muntanya a ${match.range}</span>
-                        </div>
-                        <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded ml-2">${match.height}m</span>
-                    `;
-                    li.onclick = () => {
-                        map.flyTo([match.lat, match.lng], 14, { duration: 1.5 });
-                        match.leafletObject.openPopup();
-                        closeSearch();
-                    };
-                    searchResults.appendChild(li);
-                });
-
-                try {
-                    const balearicViewbox = "1.1,40.1,4.4,38.6";
-                    const osmRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&viewbox=${balearicViewbox}&bounded=1&limit=6&addressdetails=1`);
-                    const osmData = await osmRes.json();
-
-                    if (osmData.length > 0) {
-                        const divider = document.createElement('li');
-                        divider.className = 'px-4 py-1 bg-gray-50 text-xs text-gray-400 font-semibold uppercase';
-                        divider.innerText = 'Altres indrets a les Balears';
-                        searchResults.appendChild(divider);
-
-                        osmData.forEach(place => {
-                            if(localMatches.some(lm => lm.name.toLowerCase() === place.name.toLowerCase())) return;
-
-                            const tipusLloc = traduirTipusLloc(place.class, place.type);
-                            const municipi = obtenirMunicipi(place.address);
-
-                            const detallText = municipi ? `${tipusLloc} a ${municipi}` : tipusLloc;
-
-                            const li = document.createElement('li');
-                            li.className = 'px-4 py-3 hover:bg-gray-50 cursor-pointer flex flex-col transition-colors';
-                            li.innerHTML = `
-                                <span class="font-medium text-gray-700">${place.name || place.display_name.split(',')[0]}</span>
-                                <span class="text-xs text-gray-500">${detallText}</span>
-                            `;
-                            li.onclick = () => {
-                                const lat = parseFloat(place.lat);
-                                const lon = parseFloat(place.lon);
-
-                                map.flyTo([lat, lon], 14, { duration: 1.5 });
-
-                                if(tempExternalMarker) map.removeLayer(tempExternalMarker);
-
-                                tempExternalMarker = L.marker([lat, lon]).addTo(map);
-                                tempExternalMarker.bindPopup(`
-                                    <div class="text-center p-2 min-w-[140px]">
-                                        <b class="text-gray-800 text-base block mb-1">${place.name || 'Indret'}</b>
-                                        <span class="text-xs text-gray-600 block mb-3">${detallText}</span>
-                                        <a href="${getGoogleMapsLink(lat, lon)}" target="_blank" class="inline-block bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold py-1.5 px-3 rounded-full border border-blue-200 transition-colors w-full text-center pointer-events-auto">
-                                            📍 Com arribar-hi
-                                        </a>
-                                    </div>
-                                `).openPopup();
-
-                                closeSearch();
-                            };
-                            searchResults.appendChild(li);
-                        });
-                    }
-                } catch (error) {
-                    console.error("Error cercant a OSM:", error);
-                }
-
-                if (searchResults.children.length === 0) {
-                    searchResults.innerHTML = '<li class="px-4 py-3 text-sm text-gray-500 text-center">No s\'han trobat resultats</li>';
-                }
-
-            }, 300);
-        });
-
-        clearBtn.addEventListener('click', closeSearch);
-
-        function closeSearch() {
-            searchInput.value = '';
-            searchResults.style.display = 'none';
-            clearBtn.classList.add('hidden');
-        }
-
-        // 5. XINXETA MANUAL (Esborra l'anterior automàticament)
-        map.on('click', (e) => {
-            searchResults.style.display = 'none';
-
-            const lat = e.latlng.lat;
-            const lng = e.latlng.lng;
-
-            if(userPinMarker) {
-                map.removeLayer(userPinMarker);
-            }
-            if(tempExternalMarker) {
-                map.removeLayer(tempExternalMarker);
-                tempExternalMarker = null;
-            }
-
-            userPinMarker = L.marker([lat, lng], { icon: droppedPinIcon }).addTo(map);
-
-            userPinMarker.bindPopup(`
-                <div class="text-center p-2 min-w-[140px]">
-                    <b class="text-gray-800 text-base block mb-1">Punt marcat</b>
-                    <span class="text-xs text-gray-500 block mb-3 font-mono">${lat.toFixed(5)}, ${lng.toFixed(5)}</span>
-                    <a href="${getGoogleMapsLink(lat, lng)}" target="_blank" class="inline-block bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold py-1.5 px-3 rounded-full border border-blue-200 transition-colors w-full text-center pointer-events-auto">
-                        📍 Com arribar-hi
-                    </a>
-                </div>
-            `).openPopup();
+            `, {
+                className: 'compact-pin-popup',
+                maxWidth: 210,
+                minWidth: 0,
+                autoPanPadding: [18, 18]
+            }).openPopup();
         });
 
     </script>
